@@ -45,13 +45,13 @@ pipeline {
         }
 
        stage('Verify') {
-            agent {
-                docker {
-                    image 'maven:3.9-eclipse-temurin-21'
-                }
-            }
             parallel {
                 stage('Unit Tests') {
+                    agent {
+                        docker {
+                            image 'maven:3.9-eclipse-temurin-21'
+                        }
+                    }
                     steps {
                         echo 'Running Unit Tests...'
                         sh 'mvn test'
@@ -59,6 +59,11 @@ pipeline {
                 }
 
                 stage('Lint') {
+                    agent {
+                        docker {
+                            image 'maven:3.9-eclipse-temurin-21'
+                        }
+                    }
                     steps {
                         echo 'Running Linting...'
                         sh 'mvn checkstyle:check'
@@ -68,9 +73,10 @@ pipeline {
        }
 
        stage ('Deploy') {
-            agent any
+            
             when { branch 'main'}
             parallel {
+                agent any
                 stage('Deploy to Dev') {
                     when { expression { params.DEPLOY_ENV == 'dev' } }
                     steps {
