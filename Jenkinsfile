@@ -12,6 +12,35 @@ pipeline {
     }
 
     stages {
+
+        parallel {
+            stage('Unit Tests') {
+                agent {
+                    docker {
+                        image 'maven:3.9-eclipse-temurin-21'
+                    }
+                }
+                steps {
+                    sh 'mvn test'
+                }
+                post {
+                    always {
+                        junit 'target/surefire-reports/*.xml'
+                    }
+                }
+            }
+
+            stage('Lint') {
+                agent {
+                    docker {
+                        image 'maven:3.9-eclipse-temurin-21'
+                    }
+                }
+                steps {
+                    sh 'mvn checkstyle:check'
+                }
+            }
+        }
         stage('Build') {
             agent {
                 docker {
@@ -23,34 +52,34 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            agent {
-                docker {
-                    image 'maven:3.9-eclipse-temurin-21'
-                }
-            }
-            steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
-            }
-        }
+        // stage('Test') {
+        //     agent {
+        //         docker {
+        //             image 'maven:3.9-eclipse-temurin-21'
+        //         }
+        //     }
+        //     steps {
+        //         sh 'mvn test'
+        //     }
+        //     post {
+        //         always {
+        //             junit 'target/surefire-reports/*.xml'
+        //         }
+        //     }
+        // }
 
-        stage('Docker Build & Push') {
-            agent any
-            steps {
-                script {
-                    def imageTag = params.IMAGE_TAG?.trim() ?: env.BUILD_NUMBER
-                    def img = docker.build("${IMAGE_NAME}:${imageTag}")
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-creds') {
-                        img.push()
-                        img.push('latest')
-                    }
-                }
-            }
-        }
+        // stage('Docker Build & Push') {
+        //     agent any
+        //     steps {
+        //         script {
+        //             def imageTag = params.IMAGE_TAG?.trim() ?: env.BUILD_NUMBER
+        //             def img = docker.build("${IMAGE_NAME}:${imageTag}")
+        //             docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-creds') {
+        //                 img.push()
+        //                 img.push('latest')
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
