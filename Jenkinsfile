@@ -45,6 +45,11 @@ pipeline {
         }
 
        stage('Verify') {
+            agent {
+                docker {
+                    image 'maven:3.9-eclipse-temurin-21'
+                }
+            }
             parallel {
                 stage('Unit Tests') {
                     steps {
@@ -63,6 +68,7 @@ pipeline {
        }
 
        stage ('Deploy') {
+            agent any
             when { branch 'main'}
             parallel {
                 stage('Deploy to Dev') {
