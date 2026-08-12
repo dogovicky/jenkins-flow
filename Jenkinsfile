@@ -41,48 +41,39 @@ pipeline {
         }
 
        stage('Verify') {
-         parallel {
-            stage('Unit Tests') {
-                steps {
-                    echo 'Running Unit Tests...'
+            parallel {
+                stage('Unit Tests') {
+                    steps {
+                        echo 'Running Unit Tests...'
+                    }
                 }
-            }
 
-            stage('Lint') {
-                steps {
-                    echo 'Running Linting...'
+                stage('Lint') {
+                    steps {
+                        echo 'Running Linting...'
+                    }
                 }
             }
-        }
        }
 
        stage ('Deploy') {
-        when { branch 'main'}
-        parallel {
-            stage('Deploy to Dev') {
-                when { expression { params.DEPLOY_ENV == 'dev' } }
-                steps {
-                    sh 'echo Deploying to Dev environment...'
-                    // Add your deployment commands for Dev here
+            when { branch 'main'}
+            parallel {
+                stage('Deploy to Dev') {
+                    when { expression { params.DEPLOY_ENV == 'dev' } }
+                    steps {
+                        sh 'echo Deploying to Development environment...'
+                        // Add your deployment commands for Development here
+                    }
+                }
+                stage('Deploy to Prod') {
+                    when { expression { params.DEPLOY_ENV == 'prod' } }
+                    steps {
+                        sh 'echo Deploying to Production environment...'
+                        // Add your deployment commands for Production here
+                    }
                 }
             }
-
-            stage('Deploy to Staging') {
-                when { expression { params.DEPLOY_ENV == 'staging' } }
-                steps {
-                    sh 'echo Deploying to Staging environment...'
-                    // Add your deployment commands for Staging here
-                }
-            }
-
-            stage('Deploy to Prod') {
-                when { expression { params.DEPLOY_ENV == 'prod' } }
-                steps {
-                    sh 'echo Deploying to Production environment...'
-                    // Add your deployment commands for Production here
-                }
-            }
-        }
        }
 
        triggers {
