@@ -11,6 +11,10 @@ pipeline {
         DOCKERHUB_CREDS = credentials('dockerhub-creds')
     }
 
+    triggers {
+        githubPush()
+    }
+
     stages {
 
         stage('Build') {
@@ -74,10 +78,6 @@ pipeline {
                     }
                 }
             }
-       }
-
-       triggers {
-            githubPush()
        }
 
         // stage('Docker Build & Push') {
