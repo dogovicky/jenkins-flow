@@ -13,34 +13,6 @@ pipeline {
 
     stages {
 
-        parallel {
-            stage('Unit Tests') {
-                agent {
-                    docker {
-                        image 'maven:3.9-eclipse-temurin-21'
-                    }
-                }
-                steps {
-                    sh 'mvn test'
-                }
-                post {
-                    always {
-                        junit 'target/surefire-reports/*.xml'
-                    }
-                }
-            }
-
-            stage('Lint') {
-                agent {
-                    docker {
-                        image 'maven:3.9-eclipse-temurin-21'
-                    }
-                }
-                steps {
-                    sh 'mvn checkstyle:check'
-                }
-            }
-        }
         stage('Build') {
             agent {
                 docker {
@@ -52,21 +24,37 @@ pipeline {
             }
         }
 
-        // stage('Test') {
-        //     agent {
-        //         docker {
-        //             image 'maven:3.9-eclipse-temurin-21'
-        //         }
-        //     }
-        //     steps {
-        //         sh 'mvn test'
-        //     }
-        //     post {
-        //         always {
-        //             junit 'target/surefire-reports/*.xml'
-        //         }
-        //     }
-        // }
+        stage('Test') {
+            agent {
+                docker {
+                    image 'maven:3.9-eclipse-temurin-21'
+                }
+            }
+            steps {
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+       stage('Verify') {
+         parallel {
+            stage('Unit Tests') {
+                steps {
+                    sh 'mvn test'
+                }
+            }
+
+            stage('Lint') {
+                steps {
+                    sh 'mvn checkstyle:check'
+                }
+            }
+        }
+       }
 
         // stage('Docker Build & Push') {
         //     agent any
