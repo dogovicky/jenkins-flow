@@ -76,8 +76,9 @@ pipeline {
             
             when { branch 'main'}
             parallel {
-                agent any
+                
                 stage('Deploy to Dev') {
+                    agent any
                     when { expression { params.DEPLOY_ENV == 'dev' } }
                     steps {
                         sh 'echo Deploying to Development environment...'
@@ -85,6 +86,7 @@ pipeline {
                     }
                 }
                 stage('Deploy to Prod') {
+                    agent any
                     when { expression { params.DEPLOY_ENV == 'prod' } }
                     steps {
                         sh 'echo Deploying to Production environment...'
