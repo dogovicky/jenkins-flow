@@ -49,12 +49,14 @@ pipeline {
                 stage('Unit Tests') {
                     steps {
                         echo 'Running Unit Tests...'
+                        sh 'mvn test'
                     }
                 }
 
                 stage('Lint') {
                     steps {
                         echo 'Running Linting...'
+                        sh 'mvn checkstyle:check'
                     }
                 }
             }
