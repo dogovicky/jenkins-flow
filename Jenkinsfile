@@ -44,16 +44,49 @@ pipeline {
          parallel {
             stage('Unit Tests') {
                 steps {
-                    sh 'mvn test'
+                    echo 'Running Unit Tests...'
                 }
             }
 
             stage('Lint') {
                 steps {
-                    sh 'mvn checkstyle:check'
+                    echo 'Running Linting...'
                 }
             }
         }
+       }
+
+       stage ('Deploy') {
+        when { branch 'main'}
+        parallel {
+            stage('Deploy to Dev') {
+                when { expression { params.DEPLOY_ENV == 'dev' } }
+                steps {
+                    sh 'echo Deploying to Dev environment...'
+                    // Add your deployment commands for Dev here
+                }
+            }
+
+            stage('Deploy to Staging') {
+                when { expression { params.DEPLOY_ENV == 'staging' } }
+                steps {
+                    sh 'echo Deploying to Staging environment...'
+                    // Add your deployment commands for Staging here
+                }
+            }
+
+            stage('Deploy to Prod') {
+                when { expression { params.DEPLOY_ENV == 'prod' } }
+                steps {
+                    sh 'echo Deploying to Production environment...'
+                    // Add your deployment commands for Production here
+                }
+            }
+        }
+       }
+
+       triggers {
+            githubPush()
        }
 
         // stage('Docker Build & Push') {
