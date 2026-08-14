@@ -19,34 +19,6 @@ pipeline {
 
     stages {
 
-    //    stage('Verify') {
-    //         parallel {
-    //             stage('Unit Tests') {
-    //                 agent {
-    //                     docker {
-    //                         image 'maven:3.9-eclipse-temurin-21'
-    //                     }
-    //                 }
-    //                 steps {
-    //                     echo 'Running Unit Tests...'
-    //                     sh 'mvn test'
-    //                 }
-    //             }
-
-    //             stage('Lint') {
-    //                 agent {
-    //                     docker {
-    //                         image 'maven:3.9-eclipse-temurin-21'
-    //                     }
-    //                 }
-    //                 steps {
-    //                     echo 'Running Linting...'
-    //                     sh 'mvn checkstyle:check'
-    //                 }
-    //             }
-    //         }
-    //    }
-
         stage('Build') {
             agent {
                 docker {
@@ -74,8 +46,10 @@ pipeline {
         stage('Docker Build & Push') {
             agent any
             steps {
-                def imgTag = resolveImageTag(params.IMAGE_TAG, env.BUILD_NUMBER)
-                dockerBuildPush(${IMAGE_NAME}, imgTag, ${DOCKERHUB_CREDS})
+                script { 
+                    def imgTag = resolveImageTag(params.IMAGE_TAG, env.BUILD_NUMBER) 
+                    dockerBuildPush("${IMAGE_NAME}", imgTag)
+                }
             }
         }
 
@@ -102,3 +76,32 @@ pipeline {
        }
     }
 }
+
+
+    //    stage('Verify') {
+    //         parallel {
+    //             stage('Unit Tests') {
+    //                 agent {
+    //                     docker {
+    //                         image 'maven:3.9-eclipse-temurin-21'
+    //                     }
+    //                 }
+    //                 steps {
+    //                     echo 'Running Unit Tests...'
+    //                     sh 'mvn test'
+    //                 }
+    //             }
+
+    //             stage('Lint') {
+    //                 agent {
+    //                     docker {
+    //                         image 'maven:3.9-eclipse-temurin-21'
+    //                     }
+    //                 }
+    //                 steps {
+    //                     echo 'Running Linting...'
+    //                     sh 'mvn checkstyle:check'
+    //                 }
+    //             }
+    //         }
+    //    }
