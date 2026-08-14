@@ -1,0 +1,4 @@
+#Fri Aug 14 18:47:49 EAT 2026
+configuration*?=86C1A0E55EC1122887382A53A14B58CCB4A362F
+module-resource*?\:checkstyle-suppressions.xml=E63F3E397CA2B8758544F3B75B758A6197B422FE
+module-resource*?\:checkstyle-xpath-suppressions.xml=9495F9517BA67F4A3919B637C37BB8F72F6BCAFD
